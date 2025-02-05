@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import NoteEditor from './components/NoteEditor.jsx';
-import { converter } from "./components/utils.jsx";
-
-
 
 function App() {
   const [notes, setNotes] = useState(() => {
@@ -15,9 +12,9 @@ function App() {
     localStorage.setItem("notes", JSON.stringify(notes));
   }, [notes]);
 
-  const handleSave = (id, content) => {
+  const handleSave = (id, title, content) => {
     const updatedNotes = notes.map((note) =>
-      note.id === id ? { ...note, content } : note
+      note.id === id ? { ...note, title, content } : note
     );
     setNotes(updatedNotes);
   };
@@ -28,12 +25,23 @@ function App() {
     setSelectedNote(newNote.id);
   };
 
+  const handleDelete = (id) => {
+    const filteredNotes = notes.filter((note) => note.id !== id);
+    setNotes(filteredNotes);
+    setSelectedNote(null); 
+  };
+
   return (
     <div className="app-container">
       <Sidebar notes={notes} setSelectedNote={setSelectedNote} handleAddNote={handleAddNote} />
-      <NoteEditor note={notes.find((note) => note.id === selectedNote)} handleSave={handleSave} />
+      <NoteEditor 
+        note={notes.find((note) => note.id === selectedNote)} 
+        handleSave={handleSave} 
+        handleDelete={handleDelete} 
+      />
     </div>
   );
 }
 
 export default App;
+
